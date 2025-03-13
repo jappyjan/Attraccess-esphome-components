@@ -19,8 +19,19 @@ To use this component, add it to your ESPHome configuration as an external compo
 ```yaml
 external_components:
   - source:
-      type: local
-      path: components
+      type: git
+      url: https://github.com/jappyjan/Attraccess-esphome-components.git
+    components: [api_resource_status]
+```
+
+You can also use a specific reference (tag, branch, or commit):
+
+```yaml
+external_components:
+  - source:
+      type: git
+      url: https://github.com/jappyjan/Attraccess-esphome-components.git
+      ref: main
     components: [api_resource_status]
 ```
 
@@ -34,7 +45,7 @@ Make sure to place the component files in a `components/api_resource_status` dir
 # Configure the component
 api_resource_status:
   api_url: http://your-api-url.example.com/api
-  resource_id: '12345'
+  resource_id: "12345"
   refresh_interval: 30s # Used for reconnect attempts, not polling
   # Authentication is not needed for public resources
   # username: not_needed
@@ -55,9 +66,9 @@ api_resource_status:
 # Add a sensor to display the status
 sensor:
   - platform: api_resource_status
-    name: 'Resource Status'
+    name: "Resource Status"
     id: resource_status
-    unit_of_measurement: '%'
+    unit_of_measurement: "%"
     accuracy_decimals: 1
     # Other standard sensor options are supported
 ```
@@ -68,7 +79,7 @@ sensor:
 # Add a binary sensor to show API availability
 binary_sensor:
   - platform: api_resource_status
-    name: 'API Availability'
+    name: "API Availability"
     id: api_availability
     # Other standard binary sensor options are supported
 ```
@@ -94,20 +105,20 @@ The value should be a number that represents the status of the resource. This va
 Here's a simple example of how to implement SSE for public resources on your server using Node.js and Express:
 
 ```javascript
-const express = require('express');
+const express = require("express");
 const app = express();
 
 // Store connected clients for each resource
 const clients = {};
 
 // SSE endpoint - public access, no auth required
-app.get('/api/resources/:resourceId/events', (req, res) => {
+app.get("/api/resources/:resourceId/events", (req, res) => {
   const resourceId = req.params.resourceId;
 
   // Set SSE headers
-  res.setHeader('Content-Type', 'text/event-stream');
-  res.setHeader('Cache-Control', 'no-cache');
-  res.setHeader('Connection', 'keep-alive');
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
 
   // Send initial status
   const currentStatus = getResourceStatus(resourceId);
@@ -120,8 +131,10 @@ app.get('/api/resources/:resourceId/events', (req, res) => {
   clients[resourceId].push(res);
 
   // Handle client disconnect
-  req.on('close', () => {
-    clients[resourceId] = clients[resourceId].filter((client) => client !== res);
+  req.on("close", () => {
+    clients[resourceId] = clients[resourceId].filter(
+      (client) => client !== res
+    );
   });
 });
 
@@ -151,7 +164,7 @@ function updateResource(resourceId, newStatus) {
 }
 
 app.listen(3000, () => {
-  console.log('Server is running on port 3000');
+  console.log("Server is running on port 3000");
 });
 ```
 
@@ -162,17 +175,17 @@ You can use the sensor value to trigger automations:
 ```yaml
 automation:
   - id: resource_status_critical
-    description: 'Trigger when resource status is critical'
+    description: "Trigger when resource status is critical"
     trigger:
       - platform: numeric_state
         entity_id: sensor.resource_status
         below: 10 # Trigger when status below 10%
     action:
       - logger.log:
-          format: 'Resource status is critically low: %.1f%%'
-          args: ['id(resource_status).state']
+          format: "Resource status is critically low: %.1f%%"
+          args: ["id(resource_status).state"]
 ```
 
 ## Complete Example
 
-See `example_config.yaml` for a complete configuration example.
+See `example_config.yaml` for a complete configuration example. The example already uses Git as the source, showing how to properly integrate this component using the repository URL.
