@@ -34,6 +34,8 @@ external_components:
       ref: main # Optional: specify a branch, tag, or commit
     components: [attraccess_resource]
 
+sensor:
+
 # Configure our component
 attraccess_resource:
   id: attraccess_component
