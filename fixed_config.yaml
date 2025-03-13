@@ -12,12 +12,9 @@ logger:
   level: DEBUG # Helpful for troubleshooting SSE connection
 
 # Enable Home Assistant API
-api:
-  encryption:
-    key: "zxt4TVpbKqt/iJ9SK0CxJ1I8WN1gUUolUOcSy41CtaY="
-
 ota:
-  password: "c80ec2c641cf9cc7fb2ec53bbfec4485"
+  - platform: esphome
+    password: "c80ec2c641cf9cc7fb2ec53bbfec4485"
 
 wifi:
   ssid: !secret wifi_ssid
@@ -30,11 +27,12 @@ wifi:
 
 captive_portal:
 
-# Define the main Attraccess Resource Status component
+# Define the main API Resource Status component
 external_components:
   - source:
       type: git
       url: https://github.com/jappyjan/Attraccess-esphome-components.git
+      ref: main
     components: [attraccess_resource]
 
 # Configure the main component with an ID

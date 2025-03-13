@@ -12,6 +12,9 @@ CONF_PASSWORD = "password"
 api_resource_ns = cg.esphome_ns.namespace("attraccess_resource")
 APIResourceStatusComponent = api_resource_ns.class_("APIResourceStatusComponent", cg.Component)
 
+# Add dependencies list - this is the key addition
+DEPENDENCIES = ["binary_sensor", "text_sensor", "sensor"]
+
 # Config schema for the main component
 CONFIG_SCHEMA = cv.Schema({
     cv.GenerateID(): cv.declare_id(APIResourceStatusComponent),
