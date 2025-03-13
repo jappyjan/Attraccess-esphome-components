@@ -1,0 +1,78 @@
+esphome:
+  name: resource_status_example
+  friendly_name: Resource Status Example
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+  level: DEBUG # Helpful for troubleshooting SSE connection
+
+# Enable Home Assistant API
+api:
+
+ota:
+  password: "your_ota_password"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot in case wifi connection fails
+  ap:
+    ssid: "Resource Status Fallback"
+    password: "your_fallback_password"
+
+# Load our custom component from a Git repository
+external_components:
+  - source:
+      type: git
+      url: https://github.com/jappyjan/Attraccess-esphome-components.git # Repository URL
+      ref: main # Optional: specify a branch, tag, or commit
+    components: [api_resource_status]
+
+# Configure our component
+api_resource_status:
+  api_url: http://your-api-url.example.com # The component will automatically add "/api"
+  resource_id: "12345"
+  refresh_interval: 30s # Used for reconnect attempts if connection is lost
+  # Authentication is not needed for public resources
+  # username: not_needed
+  # password: not_needed
+
+# Add text sensor to show human-readable status
+text_sensor:
+  - platform: api_resource_status
+    name: "Resource Status"
+    id: resource_status
+
+# Add binary sensors for resource monitoring
+binary_sensor:
+  # Monitor if API connection is available
+  - platform: api_resource_status
+    availability:
+      name: "API Availability"
+      id: api_availability
+
+  # Monitor if the resource is currently in use
+  - platform: api_resource_status
+    in_use:
+      name: "Resource In Use"
+      id: resource_in_use
+      # This will be ON when device is in use, OFF when available
+
+# Add automation to react to resource availability
+automation:
+  - id: resource_in_use_notification
+    description: "Alert when resource becomes available"
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.resource_in_use
+        from: "on"
+        to: "off"
+    action:
+      - logger.log:
+          format: "Resource has become available!"
