@@ -21,5 +21,4 @@ async def to_code(config):
     parent = await cg.get_variable(config[CONF_ID])
     var = await text_sensor.new_text_sensor(config)
     await cg.register_component(var, config)
-    cg.add(var.set_parent(parent))
     cg.add(parent.set_status_text_sensor(var)) 

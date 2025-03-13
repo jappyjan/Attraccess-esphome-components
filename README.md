@@ -45,7 +45,7 @@ Make sure to place the component files in a `components/api_resource_status` dir
 # Configure the component
 api_resource_status:
   api_url: http://your-api-url.example.com/api
-  resource_id: "12345"
+  resource_id: "12345" # Always use quotes for numeric resource_id values
   refresh_interval: 30s # Used for reconnect attempts, not polling
   # Authentication is not needed for public resources
   # username: not_needed
@@ -55,7 +55,7 @@ api_resource_status:
 ### Configuration Options
 
 - **api_url** (_Required_, string): The base URL of your API (must use HTTP, not HTTPS)
-- **resource_id** (_Required_, string): The ID of the resource to monitor
+- **resource_id** (_Required_, string): The numeric ID of the resource to monitor. While this is configured as a string in YAML, it should be a numeric value as the API expects a number (e.g., use `"12345"` in your configuration for resource ID 12345)
 - **refresh_interval** (_Optional_, time): How often to attempt reconnection if the connection is lost, defaults to 60s
 - **username** (_Optional_, string): Username for authentication (not needed for public resources)
 - **password** (_Optional_, string): Password for authentication (not needed for public resources)

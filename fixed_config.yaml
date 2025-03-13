@@ -1,0 +1,62 @@
+esphome:
+  name: attraccess-test
+  friendly_name: attraccess-test
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+  level: DEBUG # Helpful for troubleshooting SSE connection
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "zxt4TVpbKqt/iJ9SK0CxJ1I8WN1gUUolUOcSy41CtaY="
+
+ota:
+  password: "c80ec2c641cf9cc7fb2ec53bbfec4485"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Attraccess-Test Fallback Hotspot"
+    password: "mT24lkkKvQ3c"
+
+captive_portal:
+
+external_components:
+  - source:
+      type: git
+      url: https://github.com/jappyjan/Attraccess-esphome-components.git
+    components: [api_resource_status]
+
+api_resource_status:
+  api_url: http://localhost:3000
+  resource_id: "1"
+  refresh_interval: 30s
+
+# Add text sensor to show human-readable status (not a regular sensor)
+text_sensor:
+  - platform: api_resource_status
+    name: "Resource Status"
+    id: resource_status
+
+# Configure binary sensors with the correct structure
+binary_sensor:
+  # Monitor if API connection is available
+  - platform: api_resource_status
+    availability:
+      name: "API Availability"
+      id: api_availability
+
+  # Monitor if the resource is in use
+  - platform: api_resource_status
+    in_use:
+      name: "Resource In Use"
+      id: resource_in_use
