@@ -9,10 +9,7 @@ esp32:
 
 # Enable logging
 logger:
-  level: DEBUG # Helpful for troubleshooting SSE connection
-
-# Enable Home Assistant API
-api:
+  level: INFO
 
 ota:
   password: "your_ota_password"
@@ -31,25 +28,22 @@ external_components:
   - source:
       type: git
       url: https://github.com/jappyjan/Attraccess-esphome-components.git # Repository URL
-      ref: main # Optional: specify a branch, tag, or commit
+      ref: v0.0.3 # Optional: specify a branch, tag, or commit
     components: [attraccess_resource]
 
 sensor:
 
 # Configure our component
 attraccess_resource:
-  id: attraccess_component
+  id: my_resource
   api_url: http://your-api-url.example.com # The component will automatically add "/api"
   resource_id: "12345"
-  refresh_interval: 30s # Used for reconnect attempts if connection is lost
-  # Authentication is not needed for public resources
-  # username: not_needed
-  # password: not_needed
+  refresh_interval: 30s # Used for reconnect attempts if connection is lost, default 15s
 
 # Add text sensor to show human-readable status
 text_sensor:
   - platform: attraccess_resource
-    resource: attraccess_component
+    resource: my_resource
     name: "Resource Status"
     id: resource_status
 
@@ -57,24 +51,20 @@ text_sensor:
 binary_sensor:
   # Monitor if API connection is available
   - platform: attraccess_resource
-    resource: attraccess_component
+    resource: my_resource
+
     availability:
       name: "API Availability"
       id: api_availability
+
     in_use:
       name: "Resource In Use"
       id: resource_in_use
-      # This will be ON when device is in use, OFF when available
-
-# Add automation to react to resource availability
-automation:
-  - id: resource_in_use_notification
-    description: "Alert when resource becomes available"
-    trigger:
-      - platform: state
-        entity_id: binary_sensor.resource_in_use
-        from: "on"
-        to: "off"
-    action:
-      - logger.log:
-          format: "Resource has become available!"
+      on_press:
+        - logger.log:
+            level: INFO
+            format: "The reosurce is in use, replace this with some automations"
+      on_release:
+        - logger.log:
+            level: INFO
+            format: "The resource is available, replace this with some automations"

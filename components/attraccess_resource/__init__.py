@@ -20,7 +20,7 @@ CONFIG_SCHEMA = cv.Schema({
     cv.GenerateID(): cv.declare_id(APIResourceStatusComponent),
     cv.Required(CONF_API_URL): cv.string,
     cv.Required(CONF_RESOURCE_ID): cv.string,
-    cv.Optional(CONF_REFRESH_INTERVAL, default="60s"): cv.positive_time_period_milliseconds,
+    cv.Optional(CONF_REFRESH_INTERVAL, default="15s"): cv.positive_time_period_milliseconds,
     cv.Optional(CONF_USERNAME): cv.string,
     cv.Optional(CONF_PASSWORD): cv.string,
 }).extend(cv.COMPONENT_SCHEMA)
