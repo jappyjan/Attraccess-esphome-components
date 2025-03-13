@@ -3,13 +3,13 @@ esphome:
   friendly_name: attraccess-test
 
 esp32:
-  board: esp32dev
+  board: esp32-c3-devkitm-1
   framework:
     type: arduino
 
 # Enable logging
 logger:
-  level: DEBUG # Helpful for troubleshooting SSE connection
+  level: DEBUG
 
 # Enable Home Assistant API
 ota:
@@ -27,12 +27,12 @@ wifi:
 
 captive_portal:
 
+web_server:
+  port: 80
+
 # Define the main API Resource Status component
 external_components:
-  - source:
-      type: git
-      url: https://github.com/jappyjan/Attraccess-esphome-components.git
-      ref: v0.0.1
+  - source: components
     components: [attraccess_resource]
 
 sensor:
@@ -40,7 +40,7 @@ sensor:
 # Configure the main component with an ID
 attraccess_resource:
   id: attraccess_component
-  api_url: http://localhost:3000
+  api_url: http://192.168.178.183:3000
   resource_id: "1"
   refresh_interval: 30s
 
@@ -51,8 +51,9 @@ text_sensor:
     name: "Resource Status"
     id: resource_status
 
-# Configure binary sensors with the correct structure
+# Add binary sensors for resource monitoring
 binary_sensor:
+  # Monitor if API connection is available
   - platform: attraccess_resource
     resource: attraccess_component
     availability:
@@ -61,3 +62,4 @@ binary_sensor:
     in_use:
       name: "Resource In Use"
       id: resource_in_use
+      # This will be ON when device is in use, OFF when available

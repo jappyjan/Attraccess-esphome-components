@@ -52,6 +52,7 @@ namespace esphome
             void process_sse_line_(const std::string &line);
             void handle_api_response_(const std::string &response);
             void check_connection_();
+            void debug_network_connectivity_();
 
             std::string api_url_;
             std::string resource_id_;
