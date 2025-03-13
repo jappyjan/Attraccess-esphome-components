@@ -36,6 +36,7 @@ external_components:
 
 # Configure our component
 api_resource_status:
+  id: api_resource_status_component
   api_url: http://your-api-url.example.com # The component will automatically add "/api"
   resource_id: "12345"
   refresh_interval: 30s # Used for reconnect attempts if connection is lost
@@ -46,6 +47,7 @@ api_resource_status:
 # Add text sensor to show human-readable status
 text_sensor:
   - platform: api_resource_status
+    api_resource_status: api_resource_status_component
     name: "Resource Status"
     id: resource_status
 
@@ -53,12 +55,10 @@ text_sensor:
 binary_sensor:
   # Monitor if API connection is available
   - platform: api_resource_status
+    api_resource_status: api_resource_status_component
     availability:
       name: "API Availability"
       id: api_availability
-
-  # Monitor if the resource is currently in use
-  - platform: api_resource_status
     in_use:
       name: "Resource In Use"
       id: resource_in_use

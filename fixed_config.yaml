@@ -30,33 +30,34 @@ wifi:
 
 captive_portal:
 
+# Define the main API Resource Status component
 external_components:
   - source:
       type: git
       url: https://github.com/jappyjan/Attraccess-esphome-components.git
     components: [api_resource_status]
 
+# Configure the main component with an ID
 api_resource_status:
+  id: api_resource_status_component
   api_url: http://localhost:3000
   resource_id: "1"
   refresh_interval: 30s
 
-# Add text sensor to show human-readable status (not a regular sensor)
+# Add text sensor to show human-readable status
 text_sensor:
   - platform: api_resource_status
+    api_resource_status: api_resource_status_component
     name: "Resource Status"
     id: resource_status
 
 # Configure binary sensors with the correct structure
 binary_sensor:
-  # Monitor if API connection is available
   - platform: api_resource_status
+    api_resource_status: api_resource_status_component
     availability:
       name: "API Availability"
       id: api_availability
-
-  # Monitor if the resource is in use
-  - platform: api_resource_status
     in_use:
       name: "Resource In Use"
       id: resource_in_use

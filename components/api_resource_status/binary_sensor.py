@@ -1,7 +1,7 @@
 import esphome.codegen as cg
 import esphome.config_validation as cv
 from esphome.components import binary_sensor
-from esphome.const import CONF_ID, CONF_AVAILABILITY, DEVICE_CLASS_CONNECTIVITY, DEVICE_CLASS_OCCUPANCY
+from esphome.const import CONF_ID, DEVICE_CLASS_CONNECTIVITY, DEVICE_CLASS_OCCUPANCY
 
 from . import APIResourceStatusComponent, api_resource_ns
 
@@ -15,10 +15,12 @@ APIResourceInUseSensor = api_resource_ns.class_(
     "APIResourceInUseSensor", binary_sensor.BinarySensor, cg.Component
 )
 
+CONF_API_RESOURCE_STATUS = "api_resource_status"
+CONF_AVAILABILITY = "availability"
 CONF_IN_USE = "in_use"
 
 CONFIG_SCHEMA = cv.Schema({
-    cv.GenerateID(CONF_ID): cv.use_id(APIResourceStatusComponent),
+    cv.GenerateID(CONF_API_RESOURCE_STATUS): cv.use_id(APIResourceStatusComponent),
     cv.Optional(CONF_AVAILABILITY): binary_sensor.binary_sensor_schema(
         APIResourceAvailabilitySensor,
         device_class=DEVICE_CLASS_CONNECTIVITY,
@@ -30,7 +32,7 @@ CONFIG_SCHEMA = cv.Schema({
 })
 
 async def to_code(config):
-    parent = await cg.get_variable(config[CONF_ID])
+    parent = await cg.get_variable(config[CONF_API_RESOURCE_STATUS])
     
     if CONF_AVAILABILITY in config:
         sens = await binary_sensor.new_binary_sensor(config[CONF_AVAILABILITY])

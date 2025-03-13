@@ -11,14 +11,14 @@ APIResourceStatusSensor = api_resource_ns.class_(
     "APIResourceStatusSensor", text_sensor.TextSensor, cg.Component
 )
 
-CONFIG_SCHEMA = text_sensor.text_sensor_schema(
-    APIResourceStatusSensor
-).extend({
-    cv.GenerateID(CONF_ID): cv.use_id(APIResourceStatusComponent),
-})
+CONF_API_RESOURCE_STATUS = "api_resource_status"
+
+CONFIG_SCHEMA = cv.Schema({
+    cv.GenerateID(CONF_API_RESOURCE_STATUS): cv.use_id(APIResourceStatusComponent),
+}).extend(text_sensor.TEXT_SENSOR_SCHEMA)
 
 async def to_code(config):
-    parent = await cg.get_variable(config[CONF_ID])
+    parent = await cg.get_variable(config[CONF_API_RESOURCE_STATUS])
     var = await text_sensor.new_text_sensor(config)
     await cg.register_component(var, config)
     cg.add(parent.set_status_text_sensor(var)) 
