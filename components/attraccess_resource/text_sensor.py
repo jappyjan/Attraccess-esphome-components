@@ -5,20 +5,22 @@ from esphome.const import CONF_ID
 
 from . import APIResourceStatusComponent, api_resource_ns
 
-DEPENDENCIES = ["api_resource_status"]
+DEPENDENCIES = ["attraccess_resource"]
 
 APIResourceStatusSensor = api_resource_ns.class_(
     "APIResourceStatusSensor", text_sensor.TextSensor, cg.Component
 )
 
-CONF_API_RESOURCE_STATUS = "api_resource_status"
+CONF_PARENT_ID = "resource"
 
-CONFIG_SCHEMA = cv.Schema({
-    cv.GenerateID(CONF_API_RESOURCE_STATUS): cv.use_id(APIResourceStatusComponent),
-}).extend(text_sensor.TEXT_SENSOR_SCHEMA)
+CONFIG_SCHEMA = text_sensor.text_sensor_schema(
+    APIResourceStatusSensor
+).extend({
+    cv.Required(CONF_PARENT_ID): cv.use_id(APIResourceStatusComponent),
+})
 
 async def to_code(config):
-    parent = await cg.get_variable(config[CONF_API_RESOURCE_STATUS])
+    parent = await cg.get_variable(config[CONF_PARENT_ID])
     var = await text_sensor.new_text_sensor(config)
     await cg.register_component(var, config)
     cg.add(parent.set_status_text_sensor(var)) 

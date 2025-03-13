@@ -5,7 +5,7 @@ from esphome.const import CONF_ID, DEVICE_CLASS_CONNECTIVITY, DEVICE_CLASS_OCCUP
 
 from . import APIResourceStatusComponent, api_resource_ns
 
-DEPENDENCIES = ["api_resource_status"]
+DEPENDENCIES = ["attraccess_resource"]
 
 APIResourceAvailabilitySensor = api_resource_ns.class_(
     "APIResourceAvailabilitySensor", binary_sensor.BinarySensor, cg.Component
@@ -15,12 +15,12 @@ APIResourceInUseSensor = api_resource_ns.class_(
     "APIResourceInUseSensor", binary_sensor.BinarySensor, cg.Component
 )
 
-CONF_API_RESOURCE_STATUS = "api_resource_status"
+CONF_PARENT_ID = "resource"
 CONF_AVAILABILITY = "availability"
 CONF_IN_USE = "in_use"
 
 CONFIG_SCHEMA = cv.Schema({
-    cv.GenerateID(CONF_API_RESOURCE_STATUS): cv.use_id(APIResourceStatusComponent),
+    cv.Required(CONF_PARENT_ID): cv.use_id(APIResourceStatusComponent),
     cv.Optional(CONF_AVAILABILITY): binary_sensor.binary_sensor_schema(
         APIResourceAvailabilitySensor,
         device_class=DEVICE_CLASS_CONNECTIVITY,
@@ -32,7 +32,7 @@ CONFIG_SCHEMA = cv.Schema({
 })
 
 async def to_code(config):
-    parent = await cg.get_variable(config[CONF_API_RESOURCE_STATUS])
+    parent = await cg.get_variable(config[CONF_PARENT_ID])
     
     if CONF_AVAILABILITY in config:
         sens = await binary_sensor.new_binary_sensor(config[CONF_AVAILABILITY])

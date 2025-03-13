@@ -9,7 +9,7 @@ CONF_USERNAME = "username"
 CONF_PASSWORD = "password"
 
 # Define namespace for our component
-api_resource_ns = cg.esphome_ns.namespace("api_resource_status")
+api_resource_ns = cg.esphome_ns.namespace("attraccess_resource")
 APIResourceStatusComponent = api_resource_ns.class_("APIResourceStatusComponent", cg.Component)
 
 # Config schema for the main component

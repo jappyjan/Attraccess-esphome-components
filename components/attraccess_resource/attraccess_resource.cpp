@@ -1,4 +1,4 @@
-#include "api_resource_status.h"
+#include "attraccess_resource.h"
 #include "esphome/core/log.h"
 #include "esphome/core/application.h"
 #include <ArduinoJson.h>
@@ -6,10 +6,10 @@
 
 namespace esphome
 {
-    namespace api_resource_status
+    namespace attraccess_resource
     {
 
-        static const char *TAG = "api_resource_status";
+        static const char *TAG = "attraccess_resource";
         static const uint32_t CONNECTION_TIMEOUT = 15000; // 15 seconds
         static const uint32_t KEEPALIVE_TIMEOUT = 45000;  // 45 seconds
         static const char *STATUS_IN_USE = "In Use";
@@ -367,5 +367,5 @@ namespace esphome
             // No additional setup needed
         }
 
-    } // namespace api_resource_status
+    } // namespace attraccess_resource
 } // namespace esphome

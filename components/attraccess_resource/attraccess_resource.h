@@ -10,7 +10,7 @@
 
 namespace esphome
 {
-    namespace api_resource_status
+    namespace attraccess_resource
     {
 
         class APIResourceStatusSensor;
@@ -108,5 +108,5 @@ namespace esphome
             APIResourceStatusComponent *parent_;
         };
 
-    } // namespace api_resource_status
+    } // namespace attraccess_resource
 } // namespace esphome
