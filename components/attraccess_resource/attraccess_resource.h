@@ -46,6 +46,14 @@ namespace esphome
 
             void register_status_callback(ResourceStatusCallback callback) { this->callbacks_.push_back(callback); }
 
+            // Add getters
+            std::string get_api_url() const { return this->api_url_; }
+            std::string get_resource_id() const { return this->resource_id_; }
+
+            // Add status check methods
+            bool is_api_available() const { return this->connected_; }
+            bool is_active() const { return !this->last_in_use_; }
+
         protected:
             void connect_sse_();
             void disconnect_sse_();

@@ -1,0 +1,146 @@
+esphome:
+  name: desfire-reader
+  friendly_name: DESFire Reader
+  platformio_options:
+    board_build.partitions: huge_app.csv
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+  level: DEBUG
+  logs:
+    pn532.i2c: INFO
+    desfire: DEBUG
+    attraccess_resource: INFO
+    attraccess_desfire: DEBUG
+
+api:
+
+ota:
+  platform: esphome
+  password: !secret ota_password
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot in case wifi connection fails
+  ap:
+    ssid: "DESFire Reader Fallback"
+    password: !secret ap_password
+
+captive_portal:
+
+# Use local components directory
+external_components:
+  - source: components
+    components: [attraccess_resource, attraccess_desfire]
+
+# Add HTTP request component
+http_request:
+  verify_ssl: false
+
+# I2C bus configuration for PN532 NFC reader
+i2c:
+  sda: GPIO21
+  scl: GPIO22
+  scan: true
+  frequency: 100kHz # Lower frequency for more reliable communication with PN532
+  id: i2c_bus
+
+sensor:
+
+# Configure the attraccess_resource component
+attraccess_resource:
+  id: door_resource
+  api_url: https://api.example.com # Base URL, "/api" will be automatically appended
+  resource_id: "office-front-door"
+  refresh_interval: 30s
+
+# Configure the DESFire card reader for resource control
+attraccess_desfire:
+  id: desfire_reader
+  resource: door_resource
+  # Optional settings:
+  # resource_id: "override_resource_id"  # Optional override of the ID from attraccess_resource
+  led_pin: GPIO3 # Status LED pin
+  button_pin: GPIO14 # Button pin for initiating card read
+  reset_pin: GPIO16 # Reset pin for PN532
+  irq_pin: GPIO17 # IRQ pin for PN532
+  api_key: !secret desfire_api_key # API key for authentication
+  timeout: 30s # Timeout for card reading (default: 30s)
+
+  # Triggers when a card is successfully authorized
+  on_card_authorized:
+    - logger.log:
+        level: INFO
+        format: "Access granted!"
+    - light.turn_on: access_granted_light
+    - delay: 2s
+    - light.turn_off: access_granted_light
+
+  # Triggers when a card is denied
+  on_card_denied:
+    - logger.log:
+        level: INFO
+        format: "Access denied!"
+    - light.turn_on: access_denied_light
+    - delay: 2s
+    - light.turn_off: access_denied_light
+
+  # Triggers when any card is read - provides the card UID
+  on_card_read:
+    - logger.log:
+        level: INFO
+        format: "Card read: %s"
+        args: ["uid"]
+
+# Add text sensor to show resource status
+text_sensor:
+  - platform: template
+    name: "Resource Status Text"
+    lambda: |-
+      if (id(door_resource).is_active()) {
+        return {"Active"};
+      } else {
+        return {"Inactive"};
+      }
+    update_interval: 1s
+
+# Add binary sensors for resource monitoring
+binary_sensor:
+  # Monitor if API connection is available
+  - platform: template
+    name: "API Available"
+    lambda: |-
+      if (id(door_resource).is_api_available()) {
+        return true;
+      } else {
+        return false;
+      }
+
+# Add lights for visual feedback
+light:
+  - platform: binary
+    name: "Access Granted Light"
+    output: green_led_gpio
+    id: access_granted_light
+
+  - platform: binary
+    name: "Access Denied Light"
+    output: red_led_gpio
+    id: access_denied_light
+
+# Define outputs for indicator lights
+output:
+  - platform: gpio
+    pin: GPIO4
+    id: green_led_gpio
+
+  - platform: gpio
+    pin: GPIO5
+    id: red_led_gpio
