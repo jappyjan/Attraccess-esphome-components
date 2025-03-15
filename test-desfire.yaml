@@ -3,7 +3,7 @@ esphome:
   friendly_name: DESFire Reader
 
 esp32:
-  board: esp32dev
+  board: esp32-c3-devkitm-1
   framework:
     type: arduino
 
@@ -45,7 +45,7 @@ http_request:
 # I2C bus configuration for PN532 NFC reader
 i2c:
   sda: GPIO21
-  scl: GPIO22
+  scl: GPIO20
   scan: true
   frequency: 100kHz # Lower frequency for more reliable communication with PN532
   id: i2c_bus
@@ -55,7 +55,7 @@ sensor:
 # Configure the attraccess_resource component
 attraccess_resource:
   id: door_resource
-  api_url: https://api.example.com # Base URL, "/api" will be automatically appended
+  api_url: http://api.example.com # Base URL, "/api" will be automatically appended
   resource_id: "office-front-door"
   refresh_interval: 30s
 
@@ -65,10 +65,10 @@ attraccess_desfire:
   resource: door_resource
   # Optional settings:
   # resource_id: "override_resource_id"  # Optional override of the ID from attraccess_resource
-  led_pin: GPIO3 # Status LED pin
-  button_pin: GPIO14 # Button pin for initiating card read
-  reset_pin: GPIO16 # Reset pin for PN532
-  irq_pin: GPIO17 # IRQ pin for PN532
+  led_pin: 10 # Status LED pin
+  button_pin: 6 # Button pin for initiating card read
+  #reset_pin: GPIO16 # Reset pin for PN532
+  #irq_pin: GPIO17 # IRQ pin for PN532
   api_key: !secret desfire_api_key # API key for authentication
   timeout: 30s # Timeout for card reading (default: 30s)
 
